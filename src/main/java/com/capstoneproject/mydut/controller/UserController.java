@@ -2,6 +2,7 @@ package com.capstoneproject.mydut.controller;
 
 import com.capstoneproject.mydut.payload.request.user.NewUserRequest;
 import com.capstoneproject.mydut.payload.request.user.UpdateUserRequest;
+import com.capstoneproject.mydut.payload.response.NoContentDTO;
 import com.capstoneproject.mydut.payload.response.OnlyIdDTO;
 import com.capstoneproject.mydut.payload.response.Response;
 import com.capstoneproject.mydut.payload.response.UserDTO;
@@ -35,4 +36,8 @@ public class UserController {
         return userService.updateUser(userId, request);
     }
 
+    @DeleteMapping("{id}")
+    public Response<NoContentDTO> deleteUser(@PathVariable("id") String userId) {
+        return userService.deleteUser(userId);
+    }
 }

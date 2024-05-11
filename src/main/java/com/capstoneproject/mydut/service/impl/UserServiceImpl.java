@@ -7,6 +7,7 @@ import com.capstoneproject.mydut.domain.repository.RoleRepository;
 import com.capstoneproject.mydut.domain.repository.UserRepository;
 import com.capstoneproject.mydut.payload.request.user.NewUserRequest;
 import com.capstoneproject.mydut.payload.request.user.UpdateUserRequest;
+import com.capstoneproject.mydut.payload.response.NoContentDTO;
 import com.capstoneproject.mydut.payload.response.OnlyIdDTO;
 import com.capstoneproject.mydut.payload.response.Response;
 import com.capstoneproject.mydut.payload.response.UserDTO;
@@ -24,6 +25,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -84,13 +86,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         // TODO: validate updateUser request
         var principal = securityUtils.getPrincipal();
 
-        if (!principal.getUserId().equalsIgnoreCase(userId)) {
+        if (!principal.getUserId().equalsIgnoreCase(userId) && !Boolean.TRUE.equals(principal.isAdmin())) {
             return Response.<OnlyIdDTO>newBuilder()
                     .setSuccess(false)
                     .setMessage("No permit")
                     .build();
         }
-
 
         var user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() ->
                 new ObjectNotFoundException("userId", userId));
@@ -138,5 +139,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 )
                 .build();
 
+    }
+
+    @Override
+    public Response<NoContentDTO> deleteUser(String userId) {
+        var principal = securityUtils.getPrincipal();
+
+        if (!principal.getUserId().equalsIgnoreCase(userId) && !Boolean.TRUE.equals(principal.isAdmin())) {
+            return Response.<NoContentDTO>newBuilder()
+                    .setSuccess(false)
+                    .setMessage("No permit")
+                    .build();
+        }
+        var user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() ->
+                new ObjectNotFoundException("userId", userId));
+
+        userRepository.delete(user);
+
+        return Response.<NoContentDTO>newBuilder()
+                .setSuccess(true)
+                .setData(NoContentDTO.newBuilder().build())
+                .build();
     }
 }

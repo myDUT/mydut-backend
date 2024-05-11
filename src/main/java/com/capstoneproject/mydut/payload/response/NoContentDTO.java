@@ -7,6 +7,6 @@ import lombok.Builder;
  * @since 5/11/2024
  */
 
-@Builder
+@Builder(setterPrefix = "set", builderMethodName = "newBuilder")
 public class NoContentDTO {
 }
