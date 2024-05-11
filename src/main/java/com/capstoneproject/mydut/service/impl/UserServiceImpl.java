@@ -12,6 +12,7 @@ import com.capstoneproject.mydut.payload.response.Response;
 import com.capstoneproject.mydut.payload.response.UserDTO;
 import com.capstoneproject.mydut.service.UserService;
 import com.capstoneproject.mydut.util.RequestUtils;
+import com.capstoneproject.mydut.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.ObjectNotFoundException;
@@ -38,6 +39,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final SecurityUtils securityUtils;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -78,8 +80,42 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Response<OnlyIdDTO> updateUser(UpdateUserRequest request) {
-        return null;
+    public Response<OnlyIdDTO> updateUser(String userId, UpdateUserRequest request) {
+        // TODO: validate updateUser request
+        var principal = securityUtils.getPrincipal();
+
+        if (!principal.getUserId().equalsIgnoreCase(userId)) {
+            return Response.<OnlyIdDTO>newBuilder()
+                    .setSuccess(false)
+                    .setMessage("No permit")
+                    .build();
+        }
+
+
+        var user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() ->
+                new ObjectNotFoundException("userId", userId));
+
+        if (StringUtils.isNotBlank(request.getPassword())) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        if (StringUtils.isNotBlank(request.getStudentCode())) {
+            user.setStudentCode(request.getStudentCode());
+        }
+        if (StringUtils.isNotBlank(request.getHomeroomClass())) {
+            user.setHomeroomClass(request.getHomeroomClass());
+        }
+        user.setEmail(request.getEmail());
+        user.setFullName(request.getFullName());
+
+        userRepository.save(user);
+
+        return Response.<OnlyIdDTO>newBuilder()
+                .setSuccess(true)
+                .setMessage("Update user information successfully.")
+                .setData(OnlyIdDTO.newBuilder()
+                        .setId(userId)
+                        .build())
+                .build();
     }
 
     @Override

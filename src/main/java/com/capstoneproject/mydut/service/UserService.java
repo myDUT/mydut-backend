@@ -13,8 +13,7 @@ import com.capstoneproject.mydut.payload.response.UserDTO;
 
 public interface UserService {
     Response<OnlyIdDTO> createUser(NewUserRequest request);
-    Response<OnlyIdDTO> updateUser(UpdateUserRequest request);
-
+    Response<OnlyIdDTO> updateUser(String userId, UpdateUserRequest request);
     Response<UserDTO> getUserById(String userId);
 
 }

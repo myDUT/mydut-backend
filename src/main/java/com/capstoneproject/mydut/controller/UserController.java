@@ -1,6 +1,7 @@
 package com.capstoneproject.mydut.controller;
 
 import com.capstoneproject.mydut.payload.request.user.NewUserRequest;
+import com.capstoneproject.mydut.payload.request.user.UpdateUserRequest;
 import com.capstoneproject.mydut.payload.response.OnlyIdDTO;
 import com.capstoneproject.mydut.payload.response.Response;
 import com.capstoneproject.mydut.payload.response.UserDTO;
@@ -27,6 +28,11 @@ public class UserController {
     @GetMapping("{id}")
     public Response<UserDTO> getUserById(@PathVariable("id") String id) {
         return userService.getUserById(id);
+    }
+
+    @PutMapping("{id}")
+    public Response<OnlyIdDTO> updateUser(@PathVariable("id") String userId, @RequestBody UpdateUserRequest request) {
+        return userService.updateUser(userId, request);
     }
 
 }
