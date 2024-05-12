@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.Tuple;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -20,9 +20,16 @@ public interface ClassRepository extends JpaRepository<ClassEntity, UUID> {
     @Query("select c from ClassEntity  c where c.createdBy = :userId")
     List<ClassEntity> findAllCreatedClasses(@Param("userId") UUID userId);
 
-    @Query("select c, e from EnrollmentEntity e " +
-            "join fetch e.user u " +
-            "join fetch e.clazz c " +
+//    @Query("select c, e from EnrollmentEntity e " +
+//            "join fetch e.user u " +
+//            "join fetch e.clazz c " +
+//            "where u.userId = :userId and e.status = 'approved'")
+    @Query("select c from ClassEntity c " +
+            "inner join EnrollmentEntity e on c.classId = e.clazz.classId " +
+            "inner join UserEntity u on e.user.userId = u.userId " +
             "where u.userId = :userId and e.status = 'approved'")
-    List<Tuple> findAllClassesBelongTo(@Param("userId") UUID userId);
+    List<ClassEntity> findAllClassesBelongTo(@Param("userId") UUID userId);
+
+    @Query("select c from ClassEntity  c where c.classCode = :classCode")
+    Optional<ClassEntity> findByClassCode(@Param("classCode") String classCode);
 }

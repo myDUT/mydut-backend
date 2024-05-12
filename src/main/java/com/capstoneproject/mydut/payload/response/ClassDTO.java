@@ -25,5 +25,6 @@ public class ClassDTO {
     private String dateTo;
     private Integer totalStudent;
     private String classCode;
+    private String lecturer;
     private List<LessonDTO> lessons;
 }
