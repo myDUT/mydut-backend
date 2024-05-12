@@ -1,9 +1,17 @@
 package com.capstoneproject.mydut.payload.request.clazz;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * @author vndat00
  * @since 5/12/2024
  */
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class UpdateClassRequest {
     private String roomId;
     private String name;

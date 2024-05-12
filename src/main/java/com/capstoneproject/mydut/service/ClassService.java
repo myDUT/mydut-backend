@@ -17,10 +17,8 @@ import java.util.List;
 
 public interface ClassService {
     public Response<OnlyIdDTO> createClass(NewClassRequest request) throws ParseException;
-    public Response<OnlyIdDTO> updateClass(UpdateClassRequest request);
-    public Response<NoContentDTO> deleteClass(OnlyIdDTO request);
+    public Response<OnlyIdDTO> updateClass(String classId, UpdateClassRequest request);
+    public Response<NoContentDTO> deleteClass(String classId);
     public Response<List<ClassDTO>> getAllClass();
     public Response<List<ClassDTO>> getAllClassesDependOnPrincipal();
-    public Response<ClassDTO> getClassAndAllLessonsById(OnlyIdDTO request);
-
 }

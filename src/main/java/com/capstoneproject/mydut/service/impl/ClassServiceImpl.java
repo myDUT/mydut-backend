@@ -1,10 +1,9 @@
 package com.capstoneproject.mydut.service.impl;
 
+import com.capstoneproject.mydut.converter.ClassConverter;
 import com.capstoneproject.mydut.domain.entity.ClassEntity;
 import com.capstoneproject.mydut.domain.entity.LessonEntity;
-import com.capstoneproject.mydut.domain.repository.ClassRepository;
-import com.capstoneproject.mydut.domain.repository.LessonRepository;
-import com.capstoneproject.mydut.domain.repository.RoomRepository;
+import com.capstoneproject.mydut.domain.repository.*;
 import com.capstoneproject.mydut.exception.ObjectNotFoundException;
 import com.capstoneproject.mydut.payload.request.clazz.NewClassRequest;
 import com.capstoneproject.mydut.payload.request.clazz.UpdateClassRequest;
@@ -17,12 +16,16 @@ import com.capstoneproject.mydut.util.DateTimeUtils;
 import com.capstoneproject.mydut.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import javax.persistence.Tuple;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author vndat00
@@ -36,6 +39,10 @@ public class ClassServiceImpl implements ClassService {
     private final ClassRepository classRepository;
     private final RoomRepository roomRepository;
     private final LessonRepository lessonRepository;
+    private final EnrollmentRepository enrollmentRepository;
+    private final EvidenceImageRepository evidenceImageRepository;
+    private final AttendanceRecordRepository attendanceRecordRepository;
+    private final CoordinateRepository coordinateRepository;
 
     @Override
     @Transactional
@@ -113,12 +120,32 @@ public class ClassServiceImpl implements ClassService {
     }
 
     @Override
-    public Response<OnlyIdDTO> updateClass(UpdateClassRequest request) {
-        return null;
+    @Transactional
+    public Response<OnlyIdDTO> updateClass(String classId, UpdateClassRequest request) {
+        // TODO: validate updateClass request
+        var clazz = classRepository.findById(UUID.fromString(classId)).orElseThrow(() ->
+                new ObjectNotFoundException("classId", classId));
+        if (!clazz.getRoom().getRoomId().toString().equalsIgnoreCase(request.getRoomId())) {
+            var newRoom = roomRepository.findById(UUID.fromString(request.getRoomId())).orElseThrow(() ->
+                    new ObjectNotFoundException("roomId", request.getRoomId()));
+            clazz.setRoom(newRoom);
+        }
+        clazz.setName(StringUtils.defaultString(request.getName()));
+        clazz.setClassCode(StringUtils.defaultString(request.getClassCode()));
+
+        classRepository.save(clazz);
+
+        return Response.<OnlyIdDTO>newBuilder()
+                .setSuccess(true)
+                .setMessage("Update class information successfully.")
+                .setData(OnlyIdDTO.newBuilder()
+                        .setId(classId)
+                        .build())
+                .build();
     }
 
     @Override
-    public Response<NoContentDTO> deleteClass(OnlyIdDTO request) {
+    public Response<NoContentDTO> deleteClass(String classId) {
         return null;
     }
 
@@ -129,12 +156,36 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public Response<List<ClassDTO>> getAllClassesDependOnPrincipal() {
-        return null;
-    }
+        var principal = securityUtils.getPrincipal();
 
-    @Override
-    public Response<ClassDTO> getClassAndAllLessonsById(OnlyIdDTO request) {
-        return null;
+        List<ClassEntity> classes = new ArrayList<>();
+
+        if (Boolean.TRUE.equals(principal.isTeacher())) {
+            classes = classRepository.findAllCreatedClasses(UUID.fromString(principal.getUserId()));
+
+
+        } else if (Boolean.TRUE.equals(principal.isStudent())) {
+
+            List<Tuple> tuples = classRepository.findAllClassesBelongTo(UUID.fromString(principal.getUserId()));
+
+            classes = tuples.stream()
+                    .map(t -> t.get(0, ClassEntity.class))
+                    .collect(Collectors.toList());
+        }
+        if (!CollectionUtils.isEmpty(classes)) {
+            return Response.<List<ClassDTO>>newBuilder()
+                    .setSuccess(true)
+                    .setMessage("All classes you have created or belong to have been successfully retrieved.")
+                    .setData(classes.stream()
+                            .map(ClassConverter::map)
+                            .collect(Collectors.toList()))
+                    .build();
+        }
+
+        return Response.<List<ClassDTO>>newBuilder()
+                .setSuccess(true)
+                .setMessage("No classes created/classes owned by you.")
+                .build();
     }
 }
 
