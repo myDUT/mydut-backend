@@ -43,6 +43,7 @@ public class ClassServiceImpl implements ClassService {
     private final EvidenceImageRepository evidenceImageRepository;
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final CoordinateRepository coordinateRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -60,6 +61,7 @@ public class ClassServiceImpl implements ClassService {
         classEntity.setName(StringUtils.defaultString(request.getName()));
         classEntity.setDayOfWeek(request.getDayOfWeek() != null ? request.getDayOfWeek() : 0);
         classEntity.setClassCode(StringUtils.defaultString(request.getClassCode()));
+        classEntity.setTotalStudent(0);
 
         Date dateFrom = DateTimeUtils.move2BeginTimeOfDay(DateTimeUtils.string2Timestamp(request.getDateFrom()));
         Date dateTo = DateTimeUtils.move2EndTimeOfDay(DateTimeUtils.string2Timestamp(request.getDateTo()));
@@ -166,18 +168,27 @@ public class ClassServiceImpl implements ClassService {
 
         } else if (Boolean.TRUE.equals(principal.isStudent())) {
 
-            List<Tuple> tuples = classRepository.findAllClassesBelongTo(UUID.fromString(principal.getUserId()));
+            classes = classRepository.findAllClassesBelongTo(UUID.fromString(principal.getUserId()));
 
-            classes = tuples.stream()
-                    .map(t -> t.get(0, ClassEntity.class))
-                    .collect(Collectors.toList());
+//            classes = tuples.stream()
+//                    .map(t -> t.get(0, ClassEntity.class))
+//                    .collect(Collectors.toList());
         }
         if (!CollectionUtils.isEmpty(classes)) {
             return Response.<List<ClassDTO>>newBuilder()
                     .setSuccess(true)
                     .setMessage("All classes you have created or belong to have been successfully retrieved.")
                     .setData(classes.stream()
-                            .map(ClassConverter::map)
+                            .map(c -> {
+                                ClassDTO.ClassDTOBuilder builder = ClassConverter.entityToBuilder(c);
+
+                                if (Boolean.TRUE.equals(principal.isStudent())) {
+                                    var lecturer = userRepository.findById(c.getCreatedBy()).orElseThrow(() ->
+                                            new ObjectNotFoundException("userId", c.getCreatedBy()));
+                                    builder.setLecturer(lecturer.getFullName());
+                                }
+                                return builder.build();
+                            })
                             .collect(Collectors.toList()))
                     .build();
         }
