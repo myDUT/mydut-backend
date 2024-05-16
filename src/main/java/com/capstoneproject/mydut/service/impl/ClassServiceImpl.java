@@ -173,6 +173,8 @@ public class ClassServiceImpl implements ClassService {
 //            classes = tuples.stream()
 //                    .map(t -> t.get(0, ClassEntity.class))
 //                    .collect(Collectors.toList());
+        } else {
+            classes = classRepository.findAll();
         }
         if (!CollectionUtils.isEmpty(classes)) {
             return Response.<List<ClassDTO>>newBuilder()
@@ -182,7 +184,7 @@ public class ClassServiceImpl implements ClassService {
                             .map(c -> {
                                 ClassDTO.ClassDTOBuilder builder = ClassConverter.entityToBuilder(c);
 
-                                if (Boolean.TRUE.equals(principal.isStudent())) {
+                                if (!Boolean.TRUE.equals(principal.isTeacher()) ) {
                                     var lecturer = userRepository.findById(c.getCreatedBy()).orElseThrow(() ->
                                             new ObjectNotFoundException("userId", c.getCreatedBy()));
                                     builder.setLecturer(lecturer.getFullName());

@@ -57,7 +57,8 @@ public class ClassController {
     @GetMapping
     @Secured(value = {
             MyDUTPermission.Role.TEACHER,
-            MyDUTPermission.Role.STUDENT
+            MyDUTPermission.Role.STUDENT,
+            MyDUTPermission.Role.ADMIN
     })
     public Response<List<ClassDTO>> getAllClassesBelongTo() {
         return classService.getAllClassesDependOnPrincipal();
