@@ -36,7 +36,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 @RequiredArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    private static final long EXPIRE_DURATION_ACCESS_TOKEN = 2L * 60 * 60 * 1000; // 1h
+    private static final long EXPIRE_DURATION_ACCESS_TOKEN = 2L * 60 * 60 * 1000; // 2hrs
     private static final long EXPIRE_DURATION_REFRESH_TOKEN = 10L * 60 * 60 * 1000; // 10hrs
 
     private final UserRepository userRepository;

@@ -16,6 +16,7 @@ import java.util.List;
 @Builder(setterPrefix = "set", builderMethodName = "newBuilder")
 public class ClassDTO {
     private String classId;
+    private String className;
     private String roomId;
     private String roomName;
     private Integer dayOfWeek;

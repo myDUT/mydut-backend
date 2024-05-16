@@ -13,6 +13,7 @@ public class ClassConverter {
     public static ClassDTO.ClassDTOBuilder entityToBuilder(ClassEntity entity) {
         return ClassDTO.newBuilder()
                 .setClassId(String.valueOf(entity.getClassId()))
+                .setClassName(entity.getName())
                 .setRoomId(String.valueOf(entity.getRoom().getRoomId()))
                 .setRoomName(entity.getRoom().getName())
                 .setDayOfWeek(entity.getDayOfWeek())
