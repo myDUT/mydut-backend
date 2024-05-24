@@ -1,0 +1,1 @@
+alter table clazz add column lecturer varchar(255);

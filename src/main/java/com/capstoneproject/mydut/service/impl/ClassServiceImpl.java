@@ -73,6 +73,8 @@ public class ClassServiceImpl implements ClassService {
         classEntity.setTimeFrom(new Timestamp(timeFrom.getTime()));
         classEntity.setTimeTo(new Timestamp(timeTo.getTime()));
 
+        classEntity.setLecturer(principal.getFullName());
+
         classEntity.prePersist(UUID.fromString(principal.getUserId()));
 
         var savedClass = classRepository.save(classEntity);
