@@ -48,4 +48,7 @@ public class LessonEntity {
 
     @Column(name = "absent_student")
     private Integer absentStudent;
+
+    @Column(name = "is_enable_check_in")
+    private Boolean isEnableCheckIn;
 }

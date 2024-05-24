@@ -56,4 +56,7 @@ public class ClassEntity extends Auditable<UUID> {
     @OneToMany(mappedBy = "clazz")
     private List<LessonEntity> lessons = new ArrayList<>();
 
+    @Column(name = "facial_data_url")
+    private String facialDataUrl;
+
 }

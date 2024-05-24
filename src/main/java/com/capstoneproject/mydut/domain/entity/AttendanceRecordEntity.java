@@ -47,4 +47,7 @@ public class AttendanceRecordEntity {
     @Column(name = "is_facial_recognition", nullable = false)
     private Boolean isFacialRecognition;
 
+    @Column(name = "distance")
+    private Double distance;
+
 }
