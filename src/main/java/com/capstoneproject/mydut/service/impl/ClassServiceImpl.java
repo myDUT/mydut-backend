@@ -94,6 +94,8 @@ public class ClassServiceImpl implements ClassService {
             lesson.setDatetimeFrom(new Timestamp(datetimeFrom.getTime()));
             lesson.setDatetimeTo(new Timestamp(datetimeTo.getTime()));
 
+            lesson.setIsEnableCheckIn(false);
+
             lessons.add(lesson);
         }
 

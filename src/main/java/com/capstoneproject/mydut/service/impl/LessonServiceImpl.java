@@ -1,8 +1,13 @@
 package com.capstoneproject.mydut.service.impl;
 
 import com.capstoneproject.mydut.common.constants.MyDUTPermission;
+import com.capstoneproject.mydut.domain.entity.CoordinateEntity;
+import com.capstoneproject.mydut.domain.repository.CoordinateRepository;
 import com.capstoneproject.mydut.domain.repository.LessonRepository;
+import com.capstoneproject.mydut.exception.ObjectNotFoundException;
+import com.capstoneproject.mydut.payload.request.lesson.StartCheckInRequest;
 import com.capstoneproject.mydut.payload.response.GeneralInfoLessonDTO;
+import com.capstoneproject.mydut.payload.response.NoContentDTO;
 import com.capstoneproject.mydut.payload.response.Response;
 import com.capstoneproject.mydut.service.LessonService;
 import com.capstoneproject.mydut.util.DateTimeUtils;
@@ -10,6 +15,7 @@ import com.capstoneproject.mydut.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,6 +31,7 @@ import java.util.UUID;
 @Service
 public class LessonServiceImpl implements LessonService {
     private final LessonRepository lessonRepository;
+    private final CoordinateRepository coordinateRepository;
     private final SecurityUtils securityUtils;
 
     @Override
@@ -54,6 +61,48 @@ public class LessonServiceImpl implements LessonService {
                 .setSuccess(true)
                 .setMessage("Get list lessons successfully.")
                 .setData(listLessons)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public Response<NoContentDTO> startCheckIn(StartCheckInRequest request) {
+        var lesson = lessonRepository.findById(UUID.fromString(request.getLessonId())).orElseThrow(() ->
+                new ObjectNotFoundException("lessonId", request.getLessonId()));
+
+        // create coordinate entity
+        CoordinateEntity coordinate = new CoordinateEntity();
+        coordinate.setLatitude(request.getCoordinateDTO().getLatitude());
+        coordinate.setLongitude(request.getCoordinateDTO().getLongitude());
+
+        var createdCoordinate = coordinateRepository.save(coordinate);
+
+        if (Boolean.FALSE.equals(lesson.getIsEnableCheckIn())) {
+            lesson.setIsEnableCheckIn(Boolean.TRUE);
+        }
+        lesson.setCoordinate(createdCoordinate);
+
+        lessonRepository.save(lesson);
+
+        return Response.<NoContentDTO>newBuilder()
+                .setSuccess(true)
+                .setMessage("Start check-in successfully.")
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public Response<NoContentDTO> endCheckIn(String lessonId) {
+        var lesson = lessonRepository.findById(UUID.fromString(lessonId)).orElseThrow(() ->
+                new ObjectNotFoundException("lessonId", lessonId));
+
+        if (Boolean.TRUE.equals(lesson.getIsEnableCheckIn())) {
+            lesson.setIsEnableCheckIn(Boolean.FALSE);
+        }
+        lessonRepository.save(lesson);
+        return Response.<NoContentDTO>newBuilder()
+                .setSuccess(true)
+                .setMessage("End check in successfully.")
                 .build();
     }
 }
