@@ -52,7 +52,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
         enrollment.setUser(currentUser);
         enrollment.setClazz(clazz);
-        enrollment.setStatus(EnrollmentStatus.WAITING.getValue());
+        enrollment.setStatus(EnrollmentStatus.WAITING.getId());
 
         enrollment.prePersist(UUID.fromString(principal.getUserId()));
 
@@ -86,7 +86,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         List<EnrollmentEntity> neededApproveEnrollments = enrollmentRepository.findAllByClassIdAndUserIds(classId, userIds);
 
         for (var enrollment : neededApproveEnrollments) {
-            enrollment.setStatus(EnrollmentStatus.APPROVED.getValue());
+            enrollment.setStatus(EnrollmentStatus.APPROVED.getId());
             enrollment.preUpdate(UUID.fromString(principal.getUserId()));
         }
 
