@@ -59,4 +59,7 @@ public class ClassEntity extends Auditable<UUID> {
     @Column(name = "facial_data_url")
     private String facialDataUrl;
 
+    @Column(name = "lecturer")
+    private String lecturer;
+
 }

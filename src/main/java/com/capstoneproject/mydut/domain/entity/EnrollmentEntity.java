@@ -34,5 +34,5 @@ public class EnrollmentEntity extends Auditable<UUID> {
     private ClassEntity clazz;
 
     @Column(name = "status")
-    private String status;
+    private Integer status;
 }

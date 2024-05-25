@@ -73,6 +73,8 @@ public class ClassServiceImpl implements ClassService {
         classEntity.setTimeFrom(new Timestamp(timeFrom.getTime()));
         classEntity.setTimeTo(new Timestamp(timeTo.getTime()));
 
+        classEntity.setLecturer(principal.getFullName());
+
         classEntity.prePersist(UUID.fromString(principal.getUserId()));
 
         var savedClass = classRepository.save(classEntity);
@@ -91,6 +93,8 @@ public class ClassServiceImpl implements ClassService {
 
             lesson.setDatetimeFrom(new Timestamp(datetimeFrom.getTime()));
             lesson.setDatetimeTo(new Timestamp(datetimeTo.getTime()));
+
+            lesson.setIsEnableCheckIn(false);
 
             lessons.add(lesson);
         }

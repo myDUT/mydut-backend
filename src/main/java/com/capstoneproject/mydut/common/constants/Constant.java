@@ -19,4 +19,9 @@ public class Constant {
     public static final String LOGIN_PATH = "/login";
     public static final String REFRESH_TOKEN_PATH = "/token/refresh";
     public static final List<String> UN_AUTHENTICATION_PATH = List.of(LOGIN_PATH, REFRESH_TOKEN_PATH);
+
+    // Check-in
+    public static final int EARTH_RADIUS = 6371; // Earth Radius in Kilometers
+    public static final double VALID_DISTANCE_CHECK_IN = 0.1;  // Valid distance is 100 meters
+
 }

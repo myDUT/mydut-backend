@@ -12,9 +12,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum EnrollmentStatus {
-    WAITING("waiting"),
-    REJECTED("rejected"),
-    APPROVED("approved");
+    REJECTED(0, "rejected"),
+    APPROVED(1, "approved"),
+    WAITING(2, "waiting");
 
+    public final int id;
     public final String value;
 }
