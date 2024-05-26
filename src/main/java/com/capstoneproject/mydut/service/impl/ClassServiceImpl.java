@@ -62,6 +62,7 @@ public class ClassServiceImpl implements ClassService {
         classEntity.setDayOfWeek(request.getDayOfWeek() != null ? request.getDayOfWeek() : 0);
         classEntity.setClassCode(StringUtils.defaultString(request.getClassCode()));
         classEntity.setTotalStudent(0);
+        classEntity.setIsDeleted(Boolean.FALSE);
 
         Date dateFrom = DateTimeUtils.move2BeginTimeOfDay(DateTimeUtils.string2Timestamp(request.getDateFrom()));
         Date dateTo = DateTimeUtils.move2EndTimeOfDay(DateTimeUtils.string2Timestamp(request.getDateTo()));
@@ -94,7 +95,7 @@ public class ClassServiceImpl implements ClassService {
             lesson.setDatetimeFrom(new Timestamp(datetimeFrom.getTime()));
             lesson.setDatetimeTo(new Timestamp(datetimeTo.getTime()));
 
-            lesson.setIsEnableCheckIn(false);
+            lesson.setIsEnableCheckIn(Boolean.FALSE);
 
             lessons.add(lesson);
         }
@@ -152,7 +153,17 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public Response<NoContentDTO> deleteClass(String classId) {
-        return null;
+        var clazz = classRepository.findById(UUID.fromString(classId)).orElseThrow(() ->
+                new ObjectNotFoundException("classId", classId));
+
+        clazz.setIsDeleted(Boolean.TRUE);
+
+        classRepository.save(clazz);
+
+        return Response.<NoContentDTO>newBuilder()
+                .setSuccess(true)
+                .setMessage("Deleted class successfully.")
+                .build();
     }
 
     @Override
@@ -164,7 +175,7 @@ public class ClassServiceImpl implements ClassService {
     public Response<List<ClassDTO>> getAllClassesDependOnPrincipal() {
         var principal = securityUtils.getPrincipal();
 
-        List<ClassEntity> classes = new ArrayList<>();
+        List<ClassEntity> classes;
 
         if (Boolean.TRUE.equals(principal.isTeacher())) {
             classes = classRepository.findAllCreatedClasses(UUID.fromString(principal.getUserId()));
@@ -174,11 +185,8 @@ public class ClassServiceImpl implements ClassService {
 
             classes = classRepository.findAllClassesBelongTo(UUID.fromString(principal.getUserId()));
 
-//            classes = tuples.stream()
-//                    .map(t -> t.get(0, ClassEntity.class))
-//                    .collect(Collectors.toList());
         } else {
-            classes = classRepository.findAll();
+            classes = classRepository.findAllNoDelete();
         }
         if (!CollectionUtils.isEmpty(classes)) {
             return Response.<List<ClassDTO>>newBuilder()

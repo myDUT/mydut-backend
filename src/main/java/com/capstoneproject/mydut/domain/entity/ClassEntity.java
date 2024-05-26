@@ -62,4 +62,7 @@ public class ClassEntity extends Auditable<UUID> {
     @Column(name = "lecturer")
     private String lecturer;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+
 }

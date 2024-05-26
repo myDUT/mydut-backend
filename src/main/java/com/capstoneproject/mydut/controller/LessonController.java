@@ -2,9 +2,7 @@ package com.capstoneproject.mydut.controller;
 
 import com.capstoneproject.mydut.common.constants.MyDUTPermission;
 import com.capstoneproject.mydut.payload.request.lesson.StartCheckInRequest;
-import com.capstoneproject.mydut.payload.response.GeneralInfoLessonDTO;
-import com.capstoneproject.mydut.payload.response.NoContentDTO;
-import com.capstoneproject.mydut.payload.response.Response;
+import com.capstoneproject.mydut.payload.response.*;
 import com.capstoneproject.mydut.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
@@ -23,9 +21,9 @@ import java.util.List;
 public class LessonController {
     private final LessonService lessonService;
 
-    @GetMapping("/find-lessons-in-date/{time}")
+    @GetMapping("/get-lessons-in-date/{time}")
     public Response<List<GeneralInfoLessonDTO>> getAllLessonsInADay(@PathVariable("time") String time) {
-        return lessonService.getLessonsInADay(time);
+        return lessonService.getAllLessonsInADay(time);
     }
 
     @PostMapping("/start-check-in")
@@ -42,5 +40,10 @@ public class LessonController {
     })
     public Response<NoContentDTO> endCheckIn(@RequestParam(value = "lessonId") String lessonId) {
         return lessonService.endCheckIn(lessonId);
+    }
+
+    @GetMapping
+    public Response<ListDTO<LessonDTO>> getAllLessonByClassId(@RequestParam(name = "classId") String classId) {
+        return lessonService.getAllLessonsByClassId(classId);
     }
 }

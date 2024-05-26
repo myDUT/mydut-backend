@@ -2,13 +2,12 @@ package com.capstoneproject.mydut.service.impl;
 
 import com.capstoneproject.mydut.common.constants.MyDUTPermission;
 import com.capstoneproject.mydut.domain.entity.CoordinateEntity;
+import com.capstoneproject.mydut.domain.repository.AttendanceRecordRepository;
 import com.capstoneproject.mydut.domain.repository.CoordinateRepository;
 import com.capstoneproject.mydut.domain.repository.LessonRepository;
 import com.capstoneproject.mydut.exception.ObjectNotFoundException;
 import com.capstoneproject.mydut.payload.request.lesson.StartCheckInRequest;
-import com.capstoneproject.mydut.payload.response.GeneralInfoLessonDTO;
-import com.capstoneproject.mydut.payload.response.NoContentDTO;
-import com.capstoneproject.mydut.payload.response.Response;
+import com.capstoneproject.mydut.payload.response.*;
 import com.capstoneproject.mydut.service.LessonService;
 import com.capstoneproject.mydut.util.DateTimeUtils;
 import com.capstoneproject.mydut.util.SecurityUtils;
@@ -32,10 +31,11 @@ import java.util.UUID;
 public class LessonServiceImpl implements LessonService {
     private final LessonRepository lessonRepository;
     private final CoordinateRepository coordinateRepository;
+    private final AttendanceRecordRepository attendanceRecordRepository;
     private final SecurityUtils securityUtils;
 
     @Override
-    public Response<List<GeneralInfoLessonDTO>> getLessonsInADay(String time) {
+    public Response<List<GeneralInfoLessonDTO>> getAllLessonsInADay(String time) {
         var principal = securityUtils.getPrincipal();
         List<GeneralInfoLessonDTO> listLessons = new ArrayList<>();
 
@@ -104,5 +104,23 @@ public class LessonServiceImpl implements LessonService {
                 .setSuccess(true)
                 .setMessage("End check in successfully.")
                 .build();
+    }
+
+    @Override
+    public Response<ListDTO<LessonDTO>> getAllLessonsByClassId(String classId) {
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public void updatePresentStudentInLesson(String lessonId) {
+        var lesson = lessonRepository.findById(UUID.fromString(lessonId)).orElseThrow(() ->
+                new ObjectNotFoundException("lessonId", lessonId));
+
+        Integer presentStudent = attendanceRecordRepository.countValidCheckInByLessonId(UUID.fromString(lessonId));
+
+        lesson.setPresentStudent(presentStudent);
+
+        lessonRepository.save(lesson);
     }
 }

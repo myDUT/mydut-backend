@@ -17,18 +17,18 @@ import java.util.UUID;
 
 @Repository
 public interface ClassRepository extends JpaRepository<ClassEntity, UUID> {
-    @Query("select c from ClassEntity  c where c.createdBy = :userId")
+    @Query("select c from ClassEntity  c where c.createdBy = :userId and c.isDeleted = false")
     List<ClassEntity> findAllCreatedClasses(@Param("userId") UUID userId);
 
-//    @Query("select c, e from EnrollmentEntity e " +
-//            "join fetch e.user u " +
-//            "join fetch e.clazz c " +
-//            "where u.userId = :userId and e.status = 'approved'")
     @Query("select c from ClassEntity c " +
-            "inner join EnrollmentEntity e on c.classId = e.clazz.classId " +
-            "inner join UserEntity u on e.user.userId = u.userId " +
-            "where u.userId = :userId and e.status = 'approved'")
+            "join EnrollmentEntity e on c.classId = e.clazz.classId " +
+            "join UserEntity u on e.user.userId = u.userId " +
+            "where u.userId = :userId and e.status = 1 and c.isDeleted = false")
     List<ClassEntity> findAllClassesBelongTo(@Param("userId") UUID userId);
+
+    @Query("select c from ClassEntity c " +
+            "where c.isDeleted = false")
+    List<ClassEntity> findAllNoDelete();
 
     @Query("select c from ClassEntity  c where c.classCode = :classCode")
     Optional<ClassEntity> findByClassCode(@Param("classCode") String classCode);
