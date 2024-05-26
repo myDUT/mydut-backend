@@ -55,7 +55,7 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
                 new ObjectNotFoundException("lessonId", request.getLessonId()));
         var landmarkCoordinateEntity = lesson.getCoordinate();
 
-        if (Boolean.FALSE.equals(lesson.getIsEnableCheckIn())) {
+        if (Boolean.FALSE.equals(lesson.getIsEnableCheckIn()) || now.before(lesson.getDatetimeFrom()) || now.after(lesson.getDatetimeTo())) {
             return Response.<OnlyIdDTO>newBuilder()
                     .setSuccess(false)
                     .setMessage("Not accepted check-in this time.")
@@ -80,7 +80,7 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
         CoordinateEntity coordinate = new CoordinateEntity();
         coordinate.setLongitude(request.getCoordinate().getLongitude());
         coordinate.setLatitude(request.getCoordinate().getLatitude());
-        var createdCoordinate =  coordinateRepository.save(coordinate);
+        var createdCoordinate = coordinateRepository.save(coordinate);
 
         var existAttendanceRecord = attendanceRecordRepository.findByUserIdAndLessonId(UUID.fromString(principal.getUserId()), UUID.fromString(request.getLessonId()));
 

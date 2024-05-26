@@ -72,8 +72,8 @@ public class LessonServiceImpl implements LessonService {
 
         // create coordinate entity
         CoordinateEntity coordinate = new CoordinateEntity();
-        coordinate.setLatitude(request.getCoordinateDTO().getLatitude());
-        coordinate.setLongitude(request.getCoordinateDTO().getLongitude());
+        coordinate.setLatitude(request.getCoordinate().getLatitude());
+        coordinate.setLongitude(request.getCoordinate().getLongitude());
 
         var createdCoordinate = coordinateRepository.save(coordinate);
 

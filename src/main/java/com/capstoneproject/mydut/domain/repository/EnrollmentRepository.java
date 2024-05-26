@@ -25,6 +25,6 @@ public interface EnrollmentRepository extends JpaRepository<EnrollmentEntity, UU
 
     @Query("select e from EnrollmentEntity e " +
             "where e.clazz.classId = :classId " +
-            "and e.status = 'approved'")
+            "and e.status = 1")
     List<EnrollmentEntity> findAllWithStatusApproved(@Param("classId") UUID classId);
 }

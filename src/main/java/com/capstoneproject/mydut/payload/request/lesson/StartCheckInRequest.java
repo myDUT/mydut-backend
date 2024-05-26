@@ -15,5 +15,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class StartCheckInRequest {
     private String lessonId;
-    private CoordinateDTO coordinateDTO;
+    private CoordinateDTO coordinate;
 }

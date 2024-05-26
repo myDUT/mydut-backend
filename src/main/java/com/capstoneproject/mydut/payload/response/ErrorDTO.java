@@ -21,7 +21,7 @@ public class ErrorDTO implements Serializable {
     @Schema(description = "The reason related to above field that causes the error", required = true, example = "REQUIRED_FIELD_MISSING")
     private ErrorCode code;
 
-    @Schema(description = "Request value that causes the error", required = false, example = "anhdai")
+    @Schema(description = "Request value that causes the error", required = false, example = "ngocdat")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String value;
 
