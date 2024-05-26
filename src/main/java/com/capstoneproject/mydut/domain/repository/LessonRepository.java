@@ -19,7 +19,7 @@ import java.util.UUID;
 @Repository
 public interface LessonRepository extends JpaRepository<LessonEntity, UUID> {
     @Query("select new com.capstoneproject.mydut.payload.response.GeneralInfoLessonDTO(" +
-            "c.classId, l.lessonId, c.name, c.classCode, c.room.roomId, c.room.name, l.datetimeFrom, l.datetimeTo, c.lecturer, c.totalStudent, l.presentStudent" +
+            "c.classId, l.lessonId, c.name, c.classCode, c.room.roomId, c.room.name, l.datetimeFrom, l.datetimeTo, c.lecturer, c.totalStudent, l.presentStudent, l.isEnableCheckIn" +
             ") from LessonEntity l " +
             "inner join ClassEntity c on l.clazz.classId = c.classId " +
             "inner join EnrollmentEntity e on c.classId = e.clazz.classId " +
@@ -34,7 +34,7 @@ public interface LessonRepository extends JpaRepository<LessonEntity, UUID> {
             @Param("dateTimeTo") Timestamp dateTimeTo);
 
     @Query("select new com.capstoneproject.mydut.payload.response.GeneralInfoLessonDTO(" +
-            "c.classId, l.lessonId, c.name, c.classCode, c.room.roomId, c.room.name, l.datetimeFrom, l.datetimeTo, c.lecturer, c.totalStudent, l.presentStudent" +
+            "c.classId, l.lessonId, c.name, c.classCode, c.room.roomId, c.room.name, l.datetimeFrom, l.datetimeTo, c.lecturer, c.totalStudent, l.presentStudent, l.isEnableCheckIn" +
             ") from LessonEntity l " +
             "inner join ClassEntity c on l.clazz.classId = c.classId " +
             "where c.createdBy = :userId " +
@@ -46,7 +46,7 @@ public interface LessonRepository extends JpaRepository<LessonEntity, UUID> {
             @Param("dateTimeTo") Timestamp dateTimeTo);
 
     @Query("select new com.capstoneproject.mydut.payload.response.GeneralInfoLessonDTO(" +
-            "c.classId, l.lessonId, c.name, c.classCode, c.room.roomId, c.room.name, l.datetimeFrom, l.datetimeTo, c.lecturer, c.totalStudent, l.presentStudent" +
+            "c.classId, l.lessonId, c.name, c.classCode, c.room.roomId, c.room.name, l.datetimeFrom, l.datetimeTo, c.lecturer, c.totalStudent, l.presentStudent, l.isEnableCheckIn" +
             ") from LessonEntity l " +
             "inner join ClassEntity c on l.clazz.classId = c.classId " +
             "where l.datetimeFrom >= :dateTimeFrom " +

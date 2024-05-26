@@ -55,6 +55,8 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
                 new ObjectNotFoundException("lessonId", request.getLessonId()));
         var landmarkCoordinateEntity = lesson.getCoordinate();
 
+        // TODO: check user can check-in in lesson
+
         if (Boolean.FALSE.equals(lesson.getIsEnableCheckIn()) || now.before(lesson.getDatetimeFrom()) || now.after(lesson.getDatetimeTo())) {
             return Response.<OnlyIdDTO>newBuilder()
                     .setSuccess(false)

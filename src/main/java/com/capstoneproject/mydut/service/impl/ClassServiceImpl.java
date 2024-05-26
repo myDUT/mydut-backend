@@ -153,8 +153,16 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public Response<NoContentDTO> deleteClass(String classId) {
+        var principal = securityUtils.getPrincipal();
         var clazz = classRepository.findById(UUID.fromString(classId)).orElseThrow(() ->
                 new ObjectNotFoundException("classId", classId));
+
+        if (!clazz.getCreatedBy().equals(UUID.fromString(principal.getUserId()))) {
+            return Response.<NoContentDTO>newBuilder()
+                    .setSuccess(false)
+                    .setMessage("Attempt to delete a class that does not belong to the user.")
+                    .build();
+        }
 
         clazz.setIsDeleted(Boolean.TRUE);
 

@@ -28,10 +28,11 @@ public class GeneralInfoLessonDTO {
     private String lecturer;
     private Integer totalStudent;
     private Integer presentStudent;
+    private Boolean isEnableCheckIn;
 
     public GeneralInfoLessonDTO(UUID classId, UUID lessonId, String className, String classCode,
                                 UUID roomId, String roomName, Date datetimeFrom, Date datetimeTo,
-                                String lecturer, Integer totalStudent, Integer presentStudent) {
+                                String lecturer, Integer totalStudent, Integer presentStudent, Boolean isEnableCheckIn) {
         this.classId = classId;
         this.lessonId = lessonId;
         this.className = className;
@@ -43,5 +44,6 @@ public class GeneralInfoLessonDTO {
         this.lecturer = lecturer;
         this.totalStudent = totalStudent;
         this.presentStudent = presentStudent;
+        this.isEnableCheckIn = isEnableCheckIn;
     }
 }
