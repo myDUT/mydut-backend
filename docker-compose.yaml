@@ -1,0 +1,19 @@
+version: '3.9'
+services:
+  backend:
+    image: 'anhdai0801/dat-dut-backend:latest'
+    container_name: backend
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: dut-db
+      DB_PORT: 5432
+      DB_NAME: dut
+      DB_USER: postgres
+      DB_PASS: 123456
+      DB_SCHEMA: mydut
+    networks:
+      - dut
+networks:
+  dut:
+    driver: bridge
