@@ -1,10 +1,13 @@
 package com.capstoneproject.mydut.service;
 
-import com.capstoneproject.mydut.payload.request.enrollment.ApproveEnrollmentRequest;
+import com.capstoneproject.mydut.payload.request.enrollment.ActionEnrollmentRequest;
 import com.capstoneproject.mydut.payload.request.enrollment.NewEnrollmentRequest;
+import com.capstoneproject.mydut.payload.response.EnrolledStudentDTO;
 import com.capstoneproject.mydut.payload.response.NoContentDTO;
 import com.capstoneproject.mydut.payload.response.OnlyIdDTO;
 import com.capstoneproject.mydut.payload.response.Response;
+
+import java.util.List;
 
 /**
  * @author vndat00
@@ -13,5 +16,7 @@ import com.capstoneproject.mydut.payload.response.Response;
 
 public interface EnrollmentService {
     Response<OnlyIdDTO> createEnrollment(NewEnrollmentRequest request);
-    Response<NoContentDTO> approveEnrollment(ApproveEnrollmentRequest request);
+    Response<NoContentDTO> actionEnrollment(ActionEnrollmentRequest request);
+    Response<List<EnrolledStudentDTO>> getAllEnrolledStudentByClassId(String request);
+    Response<Integer> getNumberWaitingEnrollmentInClass(String request);
 }

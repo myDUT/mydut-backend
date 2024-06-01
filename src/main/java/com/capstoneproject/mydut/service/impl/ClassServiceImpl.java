@@ -22,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.persistence.Tuple;
 import javax.transaction.Transactional;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.*;
@@ -96,6 +97,7 @@ public class ClassServiceImpl implements ClassService {
             lesson.setDatetimeTo(new Timestamp(datetimeTo.getTime()));
 
             lesson.setIsEnableCheckIn(Boolean.FALSE);
+            lesson.setPresentStudent(0);
 
             lessons.add(lesson);
         }
@@ -129,6 +131,7 @@ public class ClassServiceImpl implements ClassService {
     @Override
     @Transactional
     public Response<OnlyIdDTO> updateClass(String classId, UpdateClassRequest request) {
+        var principal = securityUtils.getPrincipal();
         // TODO: validate updateClass request
         var clazz = classRepository.findById(UUID.fromString(classId)).orElseThrow(() ->
                 new ObjectNotFoundException("classId", classId));
@@ -139,6 +142,8 @@ public class ClassServiceImpl implements ClassService {
         }
         clazz.setName(StringUtils.defaultString(request.getName()));
         clazz.setClassCode(StringUtils.defaultString(request.getClassCode()));
+
+        clazz.preUpdate(UUID.fromString(principal.getUserId()));
 
         classRepository.save(clazz);
 
@@ -165,6 +170,7 @@ public class ClassServiceImpl implements ClassService {
         }
 
         clazz.setIsDeleted(Boolean.TRUE);
+        clazz.preUpdate(UUID.fromString(principal.getUserId()));
 
         classRepository.save(clazz);
 

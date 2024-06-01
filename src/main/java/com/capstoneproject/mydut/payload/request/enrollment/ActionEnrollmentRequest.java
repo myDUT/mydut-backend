@@ -14,7 +14,9 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ApproveEnrollmentRequest {
+public class ActionEnrollmentRequest {
     private String classId;
+    /* 1 is approve, 0 is reject */
+    private Integer actionType;
     private List<String> userIds;
 }

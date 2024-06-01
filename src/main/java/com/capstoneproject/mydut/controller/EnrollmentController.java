@@ -2,18 +2,15 @@ package com.capstoneproject.mydut.controller;
 
 
 import com.capstoneproject.mydut.common.constants.MyDUTPermission;
-import com.capstoneproject.mydut.payload.request.enrollment.ApproveEnrollmentRequest;
+import com.capstoneproject.mydut.payload.request.enrollment.ActionEnrollmentRequest;
 import com.capstoneproject.mydut.payload.request.enrollment.NewEnrollmentRequest;
-import com.capstoneproject.mydut.payload.response.NoContentDTO;
-import com.capstoneproject.mydut.payload.response.OnlyIdDTO;
-import com.capstoneproject.mydut.payload.response.Response;
+import com.capstoneproject.mydut.payload.response.*;
 import com.capstoneproject.mydut.service.EnrollmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author vndat00
@@ -34,11 +31,20 @@ public class EnrollmentController {
         return enrollmentService.createEnrollment(request);
     }
 
-    @PostMapping("/approve-user")
+    @PostMapping("/action-enrollment")
     @Secured(value = {
             MyDUTPermission.Role.TEACHER
     })
-    public Response<NoContentDTO> approveEnrollment(@RequestBody ApproveEnrollmentRequest request) {
-        return enrollmentService.approveEnrollment(request);
+    public Response<NoContentDTO> actionEnrollment(@RequestBody ActionEnrollmentRequest request) {
+        return enrollmentService.actionEnrollment(request);
+    }
+    @GetMapping("/enrolled-student")
+    public Response<List<EnrolledStudentDTO>> getAllEnrolledStudentInClass(@RequestParam(name = "classId") String request) {
+        return enrollmentService.getAllEnrolledStudentByClassId(request);
+    }
+
+    @GetMapping("/waiting-enrollment")
+    public Response<Integer> getNumberWaitingEnrollmentInClass(@RequestParam(name = "classId") String request) {
+        return enrollmentService.getNumberWaitingEnrollmentInClass(request);
     }
 }

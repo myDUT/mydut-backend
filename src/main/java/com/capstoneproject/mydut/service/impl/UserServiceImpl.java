@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         // TODO: validate request
         UserEntity newUser = new UserEntity();
 
-        newUser.setUsername(RequestUtils.blankIfNull(request.getUsername()));
+        newUser.setLowerUsername(RequestUtils.blankIfNull(request.getUsername()));
         if (StringUtils.isNotBlank(request.getFullName())) {
             newUser.setFullName(request.getFullName());
         }

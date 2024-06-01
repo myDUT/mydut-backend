@@ -16,6 +16,6 @@ public enum EnrollmentStatus {
     APPROVED(1, "approved"),
     WAITING(2, "waiting");
 
-    public final int id;
+    public final Integer id;
     public final String value;
 }

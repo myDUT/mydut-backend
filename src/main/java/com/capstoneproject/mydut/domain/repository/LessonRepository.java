@@ -27,7 +27,8 @@ public interface LessonRepository extends JpaRepository<LessonEntity, UUID> {
             "where u.userId = :userId " +
             "and e.status = 1 " +
             "and l.datetimeFrom >= :dateTimeFrom " +
-            "and l.datetimeTo <= :dateTimeTo ")
+            "and l.datetimeTo <= :dateTimeTo " +
+            "order by l.datetimeFrom asc")
     List<GeneralInfoLessonDTO> findAllLessonsBelongToStudentInOneDay(
             @Param("userId") UUID userId,
             @Param("dateTimeFrom") Timestamp dateTimeFrom,
@@ -39,7 +40,8 @@ public interface LessonRepository extends JpaRepository<LessonEntity, UUID> {
             "inner join ClassEntity c on l.clazz.classId = c.classId " +
             "where c.createdBy = :userId " +
             "and l.datetimeFrom >= :dateTimeFrom " +
-            "and l.datetimeTo <= :dateTimeTo ")
+            "and l.datetimeTo <= :dateTimeTo " +
+            "order by l.datetimeFrom asc")
     List<GeneralInfoLessonDTO> findAllLessonsCreatedByTeacherInOneDay(
             @Param("userId") UUID userId,
             @Param("dateTimeFrom") Timestamp dateTimeFrom,
@@ -50,7 +52,8 @@ public interface LessonRepository extends JpaRepository<LessonEntity, UUID> {
             ") from LessonEntity l " +
             "inner join ClassEntity c on l.clazz.classId = c.classId " +
             "where l.datetimeFrom >= :dateTimeFrom " +
-            "and l.datetimeTo <= :dateTimeTo ")
+            "and l.datetimeTo <= :dateTimeTo " +
+            "order by l.datetimeFrom asc")
     List<GeneralInfoLessonDTO> findAllLessonsInOneDay(
             @Param("dateTimeFrom") Timestamp dateTimeFrom,
             @Param("dateTimeTo") Timestamp dateTimeTo);

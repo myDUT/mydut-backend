@@ -1,0 +1,37 @@
+# A Docker Compose must always start with the version tag.
+# We use '3' because it's the last version.
+version: '3'
+
+services:
+  database:
+    image: 'postgres:14'
+    restart: unless-stopped
+    container_name: db-myDUT
+
+    ports:
+      - 9999:5432
+    volumes:
+      - mydut-volumes:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: mydutdb
+  minio:
+    image: minio/minio
+    container_name: minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./storage:/data
+    environment:
+      MINIO_ROOT_USER: vndat00
+      MINIO_ROOT_PASSWORD: luongngocdat
+    command: server --console-address ":9001" /data
+
+networks:
+  aat-network:
+    driver: bridge
+volumes:
+  mydut-volumes:
