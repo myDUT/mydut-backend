@@ -46,4 +46,8 @@ public class UserEntity extends Auditable<UUID> {
 
     @Column(name = "password")
     private String password;
+
+    public void setLowerUsername(String username) {
+        this.username = username.toLowerCase();
+    }
 }
