@@ -18,6 +18,7 @@ public class LessonDTO {
     private String className;
     private String datetimeFrom;
     private String datetimeTo;
+    private String roomName;
     private String description;
     private Integer totalStudent;
     private Integer presentStudent;

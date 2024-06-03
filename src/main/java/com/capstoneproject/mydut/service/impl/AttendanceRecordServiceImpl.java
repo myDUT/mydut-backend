@@ -3,15 +3,20 @@ package com.capstoneproject.mydut.service.impl;
 import com.capstoneproject.mydut.domain.dto.CoordinateDTO;
 import com.capstoneproject.mydut.domain.entity.AttendanceRecordEntity;
 import com.capstoneproject.mydut.domain.entity.CoordinateEntity;
+import com.capstoneproject.mydut.domain.projection.AttendanceRecordDetail;
 import com.capstoneproject.mydut.domain.repository.AttendanceRecordRepository;
 import com.capstoneproject.mydut.domain.repository.CoordinateRepository;
 import com.capstoneproject.mydut.domain.repository.LessonRepository;
 import com.capstoneproject.mydut.domain.repository.UserRepository;
 import com.capstoneproject.mydut.exception.ObjectNotFoundException;
 import com.capstoneproject.mydut.payload.request.attendancerecord.AttendanceRecordRequest;
+import com.capstoneproject.mydut.payload.request.attendancerecord.AttendanceReportRequest;
+import com.capstoneproject.mydut.payload.response.AttendanceRecordDTO;
+import com.capstoneproject.mydut.payload.response.EnrolledStudentDTO;
 import com.capstoneproject.mydut.payload.response.OnlyIdDTO;
 import com.capstoneproject.mydut.payload.response.Response;
 import com.capstoneproject.mydut.service.AttendanceRecordService;
+import com.capstoneproject.mydut.service.EnrollmentService;
 import com.capstoneproject.mydut.service.LessonService;
 import com.capstoneproject.mydut.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +24,10 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.capstoneproject.mydut.common.constants.Constant.VALID_DISTANCE_CHECK_IN;
 import static com.capstoneproject.mydut.util.CoordinateUtils.calcDistance;
@@ -38,6 +46,7 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
     private final UserRepository userRepository;
 
     private final LessonService lessonService;
+    private final EnrollmentService enrollmentService;
 
     private final SecurityUtils securityUtils;
 
@@ -132,6 +141,44 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
                 .setData(OnlyIdDTO.newBuilder()
                         .setId(createdAttendanceRecord.getAttendanceRecordId().toString())
                         .build())
+                .build();
+    }
+
+    @Override
+    public Response<List<AttendanceRecordDTO>> getAttendanceReportOfLesson(AttendanceReportRequest request) {
+        List<AttendanceRecordDetail> attendanceRecordDetails = attendanceRecordRepository.getAttendanceReportByLessonId(UUID.fromString(request.getLessonId()));
+
+        Map<String /* userId */, AttendanceRecordDetail> aRecordMap = attendanceRecordDetails.stream()
+                .collect(Collectors.toMap(a -> a.getUserId().toString(), a -> a));
+
+        // Get list all student class
+        List<EnrolledStudentDTO> students = enrollmentService.getAllApprovedStudentByClassId(request.getClassId());
+
+        List<AttendanceRecordDTO> attendanceReport = students.stream()
+                .map(s -> {
+                    var builder = AttendanceRecordDTO.newBuilder()
+                            .setUserId(s.getUserId())
+                            .setFullName(s.getFullName())
+                            .setStudentCode(s.getStudentCode())
+                            .setHomeroomClass(s.getHomeroomClass());
+
+                    AttendanceRecordDetail recordDetail = aRecordMap.get(s.getUserId());
+
+                    if (recordDetail != null) {
+                        builder.setTimeIn(recordDetail.getTimeIn().toString());
+                        builder.setIsValidCheckIn(Boolean.TRUE.equals(recordDetail.getIsValidCheckIn()) ? Boolean.TRUE : Boolean.FALSE);
+                        builder.setIsFacialRecognition(Boolean.TRUE.equals(recordDetail.getIsFacialRecognition()) ? Boolean.TRUE : Boolean.FALSE);
+                        builder.setDistance(recordDetail.getDistance() * 1000); /* distance: meter */
+                    }
+
+                    return builder.build();
+                })
+                .collect(Collectors.toList());
+
+        return Response.<List<AttendanceRecordDTO>>newBuilder()
+                .setSuccess(true)
+                .setMessage("Get Report of Lesson Successfully.")
+                .setData(attendanceReport)
                 .build();
     }
 }

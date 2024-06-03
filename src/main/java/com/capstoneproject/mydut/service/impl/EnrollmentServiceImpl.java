@@ -160,17 +160,11 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
-    public Response<List<EnrolledStudentDTO>> getAllApprovedStudentByClassId(String request) {
+    public List<EnrolledStudentDTO> getAllApprovedStudentByClassId(String request) {
         List<EnrolledStudent> approvedStudent = enrollmentRepository.findAllApprovedStudentByClassId(UUID.fromString(request));
 
-        List<EnrolledStudentDTO> enrolledStudentDTOs = approvedStudent.stream().map(aS -> EnrollmentConverter.projection2Dto(aS).build())
+        return approvedStudent.stream().map(aS -> EnrollmentConverter.projection2Dto(aS).build())
                 .collect(Collectors.toList());
-
-        return Response.<List<EnrolledStudentDTO>>newBuilder()
-                .setSuccess(true)
-                .setMessage("Fetch list approved student by classId successfully.")
-                .setData(enrolledStudentDTOs)
-                .build();
     }
 
     @Override

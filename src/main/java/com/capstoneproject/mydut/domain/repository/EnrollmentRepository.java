@@ -48,7 +48,7 @@ public interface EnrollmentRepository extends JpaRepository<EnrollmentEntity, UU
             "join e.user u " +
             "join e.clazz c " +
             "where c.classId = :classId " +
-            "and e.status != 1 ")
+            "and e.status = 1 ")
     List<EnrolledStudent> findAllApprovedStudentByClassId(@Param("classId") UUID classId);
 
     @Query("select count(e) " +

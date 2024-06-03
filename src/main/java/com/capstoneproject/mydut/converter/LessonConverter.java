@@ -12,6 +12,7 @@ public class LessonConverter {
                 .setDatetimeFrom(projection.getDatetimeFrom().toString())
                 .setDatetimeTo(projection.getDatetimeTo().toString())
                 .setTotalStudent(projection.getTotalStudent())
-                .setPresentStudent(projection.getPresentStudent());
+                .setPresentStudent(projection.getPresentStudent())
+                .setRoomName(projection.getRoomName());
     }
 }

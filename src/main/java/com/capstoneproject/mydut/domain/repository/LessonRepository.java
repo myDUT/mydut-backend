@@ -59,7 +59,8 @@ public interface LessonRepository extends JpaRepository<LessonEntity, UUID> {
             @Param("dateTimeFrom") Timestamp dateTimeFrom,
             @Param("dateTimeTo") Timestamp dateTimeTo);
 
-    @Query("select l.lessonId, c.classId, l.datetimeFrom, l.datetimeTo, l.presentStudent, c.name as className, c.totalStudent " +
+    @Query("select l.lessonId as lessonId, c.classId as classId, l.datetimeFrom as datetimeFrom, l.datetimeTo as datetimeTo, " +
+            "l.presentStudent as presentStudent, c.name as className, c.totalStudent as totalStudent, c.room.name as roomName " +
             "from LessonEntity l " +
             "join l.clazz c " +
             "where c.classId = :classId")
