@@ -42,6 +42,15 @@ public interface EnrollmentRepository extends JpaRepository<EnrollmentEntity, UU
             "order by status desc")
     List<EnrolledStudent> findAllEnrolledStudentByClassId(@Param("classId") UUID classId);
 
+    @Query("select e.enrollmentId as enrollmentId, u.userId as userId, u.username as username, u.fullName as fullName, u.studentCode as studentCode," +
+            " u.homeroomClass as homeroomClass, u.email as email, c.classId as classId, c.name as className, e.status as status " +
+            "from EnrollmentEntity  e " +
+            "join e.user u " +
+            "join e.clazz c " +
+            "where c.classId = :classId " +
+            "and e.status != 1 ")
+    List<EnrolledStudent> findAllApprovedStudentByClassId(@Param("classId") UUID classId);
+
     @Query("select count(e) " +
             "from EnrollmentEntity e " +
             "join e.clazz c " +

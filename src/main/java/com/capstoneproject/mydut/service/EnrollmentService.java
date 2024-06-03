@@ -18,5 +18,6 @@ public interface EnrollmentService {
     Response<OnlyIdDTO> createEnrollment(NewEnrollmentRequest request);
     Response<NoContentDTO> actionEnrollment(ActionEnrollmentRequest request);
     Response<List<EnrolledStudentDTO>> getAllEnrolledStudentByClassId(String request);
+    Response<List<EnrolledStudentDTO>> getAllApprovedStudentByClassId(String request);
     Response<Integer> getNumberWaitingEnrollmentInClass(String request);
 }
