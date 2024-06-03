@@ -1,7 +1,9 @@
 package com.capstoneproject.mydut.service.impl;
 
 import com.capstoneproject.mydut.common.constants.MyDUTPermission;
+import com.capstoneproject.mydut.converter.LessonConverter;
 import com.capstoneproject.mydut.domain.entity.CoordinateEntity;
+import com.capstoneproject.mydut.domain.projection.LessonDetail;
 import com.capstoneproject.mydut.domain.repository.AttendanceRecordRepository;
 import com.capstoneproject.mydut.domain.repository.CoordinateRepository;
 import com.capstoneproject.mydut.domain.repository.LessonRepository;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author vndat00
@@ -108,7 +111,20 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public Response<ListDTO<LessonDTO>> getAllLessonsByClassId(String classId) {
-        return null;
+        List<LessonDetail> lessons = lessonRepository.findAllLessonsByClassId(UUID.fromString(classId));
+
+        List<LessonDTO> lessonDTOs = lessons.stream()
+                .map(l -> LessonConverter.projection2Dto(l).build())
+                .collect(Collectors.toList());
+
+        return Response.<ListDTO<LessonDTO>>newBuilder()
+                .setSuccess(true)
+                .setMessage("Get all lessons in class successfully.")
+                .setData(ListDTO.<LessonDTO>builder()
+                        .totalElements((long) lessonDTOs.size())
+                        .items(lessonDTOs)
+                        .build())
+                .build();
     }
 
     @Override

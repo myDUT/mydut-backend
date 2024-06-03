@@ -149,14 +149,22 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
         List<EnrolledStudent> enrolledStudents = enrollmentRepository.findAllEnrolledStudentByClassId(classId);
 
-        List<EnrolledStudentDTO> enrolledStudentDTOS = enrolledStudents.stream().map(eS -> EnrollmentConverter.projection2Dto(eS).build())
+        List<EnrolledStudentDTO> enrolledStudentDTOs = enrolledStudents.stream().map(eS -> EnrollmentConverter.projection2Dto(eS).build())
                 .collect(Collectors.toList());
 
         return Response.<List<EnrolledStudentDTO>>newBuilder()
                 .setSuccess(true)
                 .setMessage("Fetch list enrolled student by classId successfully.")
-                .setData(enrolledStudentDTOS)
+                .setData(enrolledStudentDTOs)
                 .build();
+    }
+
+    @Override
+    public List<EnrolledStudentDTO> getAllApprovedStudentByClassId(String request) {
+        List<EnrolledStudent> approvedStudent = enrollmentRepository.findAllApprovedStudentByClassId(UUID.fromString(request));
+
+        return approvedStudent.stream().map(aS -> EnrollmentConverter.projection2Dto(aS).build())
+                .collect(Collectors.toList());
     }
 
     @Override
