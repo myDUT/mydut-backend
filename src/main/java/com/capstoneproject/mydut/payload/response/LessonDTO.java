@@ -15,9 +15,11 @@ import lombok.*;
 public class LessonDTO {
     private String lessonId;
     private String classId;
+    private String className;
     private String datetimeFrom;
     private String datetimeTo;
     private String description;
+    private Integer totalStudent;
     private Integer presentStudent;
     private Integer absentStudent;
 }

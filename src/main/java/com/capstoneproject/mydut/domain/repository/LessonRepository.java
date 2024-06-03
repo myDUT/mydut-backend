@@ -1,6 +1,7 @@
 package com.capstoneproject.mydut.domain.repository;
 
 import com.capstoneproject.mydut.domain.entity.LessonEntity;
+import com.capstoneproject.mydut.domain.projection.LessonDetail;
 import com.capstoneproject.mydut.payload.response.GeneralInfoLessonDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -57,4 +58,10 @@ public interface LessonRepository extends JpaRepository<LessonEntity, UUID> {
     List<GeneralInfoLessonDTO> findAllLessonsInOneDay(
             @Param("dateTimeFrom") Timestamp dateTimeFrom,
             @Param("dateTimeTo") Timestamp dateTimeTo);
+
+    @Query("select l.lessonId, c.classId, l.datetimeFrom, l.datetimeTo, l.presentStudent, c.name as className, c.totalStudent " +
+            "from LessonEntity l " +
+            "join l.clazz c " +
+            "where c.classId = :classId")
+    List<LessonDetail> findAllLessonsByClassId(@Param(value = "classId") UUID classId);
 }
