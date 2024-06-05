@@ -1,0 +1,23 @@
+@startuml
+title "Sequence Diagram for Importing Image to Save Recognition Data"
+
+autonumber
+
+actor Student as student
+participant MinioServer as minio
+participant RecognitionServer as recognition_server
+
+activate student
+student -> minio: Upload Image
+activate minio
+minio -> minio: Save Image
+minio --> student: Return Image URL
+deactivate minio
+student -> recognition_server: Send Image URL
+activate recognition_server
+recognition_server -> recognition_server: Process Image URL
+recognition_server --> student: Confirmation
+deactivate recognition_server
+deactivate student
+
+@enduml

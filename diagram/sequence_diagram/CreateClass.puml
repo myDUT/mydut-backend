@@ -1,0 +1,39 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor User as user
+participant Mobile as mobile
+participant Server as server
+database Database as database
+
+user -> mobile: Create new class request
+activate mobile
+mobile -> server: Send new class information
+activate server
+server -> database: Save new class
+activate database
+database --> server: Return saved class information
+deactivate database
+
+alt Class created successfully
+    server -> database: Create list lessons for class
+    activate database
+    database --> server: Return created lessons list
+    deactivate database
+    server --> mobile: Return response (Success)
+else Class created failed
+    server --> mobile: Return response (Failure)
+end
+deactivate server
+
+mobile --> user: Show message \nand redirect to List Class screen (if success)
+
+deactivate mobile
+
+@enduml
+
+
+
+@enduml

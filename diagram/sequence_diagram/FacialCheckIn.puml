@@ -1,0 +1,32 @@
+@startuml
+title "Sequence Diagram for Facial Recognition Attendance Check-in"
+
+autonumber
+
+actor Teacher as teacher
+participant Mobile as mobile
+participant FacialRecognitionServer as facial_server
+participant BackendServer as backend_server
+database Database as database
+
+activate teacher
+teacher -> mobile: Initiate Facial Recognition Check-in
+activate mobile
+mobile -> facial_server: Send Image for Facial Recognition
+activate facial_server
+facial_server -> facial_server: Process Facial Recognition
+facial_server -> backend_server: Retrieve Identified Students
+activate backend_server
+backend_server -> database: Update Check-in Status for Identified Students
+activate database
+database --> backend_server: Update Confirmation
+deactivate database
+backend_server --> facial_server: Confirmation
+deactivate facial_server
+backend_server -->> mobile: List of Identified Students
+deactivate backend_server
+mobile --> teacher: Display List of Identified Students
+deactivate mobile
+deactivate teacher
+
+@enduml

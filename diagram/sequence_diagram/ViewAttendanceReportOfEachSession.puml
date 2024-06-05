@@ -1,0 +1,28 @@
+@startuml
+title "Sequence Diagram for Viewing Attendance Report"
+
+autonumber
+
+actor User as User
+participant Mobile as Mobile
+participant Server as Server
+database Database as Database
+
+User -> Mobile: View Attendance Report
+activate Mobile
+Mobile -> Server: Send View Report Request
+activate Server
+Server -> Database: Retrieve Attendance Data
+activate Database
+alt Normal Mode
+    Database --> Server: Normal Attendance Data Retrieved
+else Advanced Mode
+    Database --> Server: Advanced Attendance Data Retrieved
+end
+deactivate Database
+Server --> Mobile: Return Attendance Data
+deactivate Server
+Mobile --> User: Display Attendance Report
+deactivate Mobile
+
+@enduml

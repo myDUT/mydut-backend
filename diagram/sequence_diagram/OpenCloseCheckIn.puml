@@ -1,0 +1,44 @@
+@startuml
+title "Sequence Diagram for Open/Close Check-in Form by Teacher"
+
+autonumber
+
+actor Teacher as teacher
+participant Mobile as mobile
+participant Server as server
+database Database as database
+
+activate teacher
+teacher -> mobile: Display Check-in Form
+activate mobile
+mobile -> server: Send Form State Request
+activate server
+server -> database: Retrieve Form State
+activate database
+database --> server: Form State Retrieved
+deactivate database
+server -> mobile: Return Form State
+deactivate server
+alt Form is Open
+    mobile -> server: Send Close Form Request
+    activate server
+    server -> database: Update Form State to Closed
+    activate database
+    database --> server: Confirmation
+    deactivate database
+    server --> mobile: Return Confirmation Message
+    mobile --> teacher: Notify Form Closed
+else Form is Closed
+    mobile -> server: Send Open Form Request
+    server -> database: Update Form State to Open
+    activate database
+    database --> server: Confirmation
+    deactivate database
+    server --> mobile: Return Confirmation Message
+    deactivate server
+    mobile --> teacher: Notify Form Opened
+    deactivate mobile
+end
+deactivate teacher
+
+@enduml

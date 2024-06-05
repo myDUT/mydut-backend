@@ -1,0 +1,44 @@
+@startuml
+title "Sequence Diagram for Student Check-in with Location Verification"
+
+autonumber
+
+actor Student as student
+participant Mobile as mobile
+participant Server as server
+database Database as database
+
+activate student
+student -> mobile: Start Attendance Check-in
+activate mobile
+mobile -> server: Send Check-in Request
+activate server
+server -> database: Retrieve Check-in Form Status
+activate database
+database --> server: Check-in Form Status Retrieved
+deactivate database
+alt Form status is Open
+    server -> server: Retrieve Teacher's Location Data
+    server -> server: Calculate Distance between Student and Teacher
+    alt distance < threshold
+        server -> database: Set check-in status is Valid
+        activate database
+        database --> server: Update Confirmation
+        deactivate database
+    else distance > threshold
+        server -> database: Set check-in status is Invalid
+        activate database
+        database --> server: Update Confirmation
+        deactivate database
+    end
+    server --> mobile: Return check-in finish message
+    mobile --> student: Display check-in finish message
+else Form status is Locked
+    server --> mobile: Return Check-in Form Status (Locked) message
+    mobile -> student: Display Form Locked Message
+end
+deactivate server
+deactivate mobile
+deactivate student
+
+@enduml

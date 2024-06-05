@@ -1,0 +1,35 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor User as User
+participant Mobile as Mobile
+participant Server as Server
+database Database as Database
+
+activate User
+User -> Mobile: Send create user request
+activate Mobile
+Mobile --> User: Show form to input
+User -> Mobile: Submit the form with information entered
+Mobile -> Server: Call API create new user
+activate Server
+Server -> Database: Save user
+activate Database
+Database --> Server: Return result
+deactivate Database
+
+alt created user successfully
+    Server --> Mobile: return success
+    Mobile --> User: Redirect to Login screen
+else created user failed
+    Server --> Mobile: return fail
+    Mobile --> User: Show message error
+end
+
+deactivate Server
+deactivate Mobile
+deactivate User
+
+@enduml

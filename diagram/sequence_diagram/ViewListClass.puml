@@ -1,0 +1,24 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor User as user
+participant Mobile as mobile
+participant Server as server
+database Database as database
+
+user -> mobile: View Class List Request
+activate mobile
+mobile -> server: Send View Class List Request
+activate server
+server -> database: Query Class List
+activate database
+database --> server: Return Class List
+deactivate database
+server --> mobile: Return Class List
+deactivate server
+mobile --> user: Display Class List
+deactivate mobile
+
+@enduml

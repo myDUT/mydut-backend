@@ -1,0 +1,32 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor User as user
+participant Mobile as mobile
+participant Server as server
+database Database as database
+
+user -> mobile: Update Class Information Request
+activate mobile
+mobile -> server: Send Update Class Information Request
+activate server
+server -> database: Update Class Information
+activate database
+
+alt Update Successful
+    database --> server: Update Successful
+    deactivate database
+    server --> mobile: Update Response (Success)
+else Update Failed
+    database --> server: Update Failed
+    deactivate database
+    server --> mobile: Update Response (Failure)
+end
+deactivate server
+
+mobile --> user: Update Class Confirmation
+deactivate mobile
+
+@enduml
