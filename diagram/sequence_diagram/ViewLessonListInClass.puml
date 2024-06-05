@@ -1,0 +1,23 @@
+@startuml
+title "Sequence Diagram for Viewing all sessions in Class"
+autonumber
+
+actor User as user
+participant Mobile as mobile
+participant Server as server
+database Database as database
+
+user -> mobile: View Class Sessions
+activate mobile
+mobile -> server: Send View Sessions Request
+activate server
+server -> database: Retrieve Class Sessions
+activate database
+database --> server: List of Class Sessions
+deactivate database
+server --> mobile: Return Class Sessions
+deactivate server
+mobile --> user: Display Class Sessions
+deactivate mobile
+
+@enduml

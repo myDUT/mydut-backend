@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor User as User
+participant Mobile as Mobile
+participant Server as Server
+database Database as Database
+
+activate User
+User -> Mobile: Send login request
+activate Mobile
+Mobile --> User: Require input username/password
+
+User -> Mobile: Input username/password
+
+Mobile -> Server: Call API login
+activate Server
+Server -> Database: Check valid username & password
+activate Database
+Database --> Server: Return result
+deactivate Database
+
+alt successful login
+    Server ---> Mobile: Login information is correct
+    Mobile ---> User: Direct to Home screen
+else failure login
+    Server --> Mobile: Login information is incorrect
+    Mobile --> User: Require recheck
+end
+
+deactivate User
+deactivate Mobile
+deactivate Server
+@enduml

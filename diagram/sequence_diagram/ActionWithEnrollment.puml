@@ -1,0 +1,83 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+title "Sequence Diagram for Student Class Enrollment and Teacher Approval/Rejection of Student Enrollment requests."
+autonumber
+
+actor Student as student
+actor Teacher as teacher
+participant Mobile as mobile
+participant Server as server
+database Database as database
+
+group Student Enrollment Request
+    student -> mobile: Enroll in Class Request
+    activate mobile
+    mobile -> server: Send Enrollment Request
+    activate server
+    server -> database: Store Enrollment Request
+    activate database
+    database --> server: Enrollment Request Stored
+    deactivate database
+    server --> mobile: Enrollment Request Confirmation
+    deactivate server
+    mobile --> student: Enrollment Confirmation
+    deactivate mobile
+end
+
+group Teacher Approves/Rejects Enrollment
+    teacher -> mobile: Open Enrollment Requests
+    activate mobile
+    mobile -> server: Fetch Enrollment Requests
+    activate server
+    server -> database: Retrieve Pending Enrollments
+    activate database
+    database --> server: List of Pending Enrollments
+    deactivate database
+    server --> mobile: Return Pending Enrollments
+    deactivate server
+    mobile --> teacher: Display Pending Enrollments
+    deactivate mobile
+
+    teacher -> mobile: Approve/Reject Enrollment Request
+    activate mobile
+    mobile -> server: Send Approve/Reject Request
+    activate server
+    alt Approve Enrollment
+        server -> database: Update Enrollment Status to Approved
+        activate database
+        database --> server: Enrollment Status Updated
+        deactivate database
+
+        server -> database: Increment Class Size
+        activate database
+        database --> server: Class Size Updated
+        deactivate database
+
+        server --> mobile: Return Approve Result
+    else Reject Enrollment
+        server -> database: Update Enrollment Status to Rejected
+        activate database
+        database --> server: Enrollment Status Updated
+        deactivate database
+
+        server --> mobile: Return Reject Result
+    end
+    deactivate server
+
+    mobile --> teacher: Display Approve/Reject Confirmation
+    deactivate mobile
+
+    alt Notify Student of Approval
+        mobile -> student: Notify Enrollment Approved
+        activate student
+        student --> mobile: Acknowledge Notification
+        deactivate student
+    else Notify Student of Rejection
+        mobile -> student: Notify Enrollment Rejected
+        activate student
+        student --> mobile: Acknowledge Notification
+        deactivate student
+    end
+end
+
+@enduml
