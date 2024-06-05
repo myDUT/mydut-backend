@@ -18,8 +18,8 @@ alt Normal Mode
     Database --> Server: Normal Attendance Data Retrieved
 else Advanced Mode
     Database --> Server: Advanced Attendance Data Retrieved
+    deactivate Database
 end
-deactivate Database
 Server --> Mobile: Return Attendance Data
 deactivate Server
 Mobile --> User: Display Attendance Report

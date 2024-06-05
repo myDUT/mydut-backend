@@ -17,7 +17,7 @@ activate facial_server
 facial_server -> facial_server: Process Facial Recognition
 facial_server -> backend_server: Retrieve Identified Students
 activate backend_server
-backend_server -> database: Update Check-in Status for Identified Students
+backend_server -> database: Update Check-in Status
 activate database
 database --> backend_server: Update Confirmation
 deactivate database
