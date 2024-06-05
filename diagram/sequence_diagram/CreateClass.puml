@@ -3,7 +3,7 @@
 
 autonumber
 
-actor User as user
+actor Teacher as user
 participant Mobile as mobile
 participant Server as server
 database Database as database

@@ -3,7 +3,7 @@
 
 autonumber
 
-actor User as user
+actor Teacher as user
 participant Mobile as mobile
 participant Server as server
 database Database as database
@@ -17,7 +17,6 @@ activate database
 
 alt Update Successful
     database --> server: Update Successful
-    deactivate database
     server --> mobile: Update Response (Success)
 else Update Failed
     database --> server: Update Failed
