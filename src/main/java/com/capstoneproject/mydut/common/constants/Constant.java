@@ -24,4 +24,7 @@ public class Constant {
     public static final int EARTH_RADIUS = 6371; // Earth Radius in Kilometers
     public static final double VALID_DISTANCE_CHECK_IN = 0.1;  // Valid distance is 100 meters
 
+    // MinIO
+    public static final String PREFIX_UPLOAD_DATA_IMAGE = "user-data/";
+
 }

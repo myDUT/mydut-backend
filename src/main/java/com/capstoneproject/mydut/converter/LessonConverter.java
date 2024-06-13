@@ -4,6 +4,7 @@ import com.capstoneproject.mydut.domain.projection.LessonDetail;
 import com.capstoneproject.mydut.payload.response.LessonDTO;
 
 public class LessonConverter {
+    private LessonConverter() {}
     public static LessonDTO.LessonDTOBuilder projection2Dto(LessonDetail projection) {
         return LessonDTO.newBuilder()
                 .setLessonId(projection.getLessonId().toString())
