@@ -23,7 +23,7 @@ import java.util.List;
 public class FileController {
     private final FileService fileService;
 
-    @GetMapping("/data-image-user")
+    @PostMapping("/data-image-user")
     @Secured(value = {
             MyDUTPermission.Role.STUDENT
     })

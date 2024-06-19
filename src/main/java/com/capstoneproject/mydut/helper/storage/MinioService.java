@@ -34,7 +34,7 @@ public class MinioService implements StorageInterface {
     private final MinioClient minioClient;
 
     public MinioService(Environment environment) {
-        String minioUrl = environment.getProperty("minio.url");
+        String minioUrl = environment.getProperty("app.minio.url");
         String accessKey = environment.getProperty("app.minio.access-key");
         String secretKey = environment.getProperty("app.minio.secret-key");
 
