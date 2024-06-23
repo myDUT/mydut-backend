@@ -26,5 +26,6 @@ public class Constant {
 
     // MinIO
     public static final String PREFIX_UPLOAD_DATA_IMAGE = "user-data/";
+    public static final String PREFIX_UPLOAD_RECOGNITION_IMAGE = "recognition-data/";
 
 }

@@ -35,16 +35,16 @@ public class AttendanceRecordEntity {
     private LessonEntity lesson;
 
     @OneToOne
-    @JoinColumn(name = "coordinate_id", nullable = false)
+    @JoinColumn(name = "coordinate_id")
     private CoordinateEntity coordinate;
 
-    @Column(name = "time_in", nullable = false)
+    @Column(name = "time_in")
     private Timestamp timeIn;
 
-    @Column(name = "is_valid_check_in", nullable = false)
+    @Column(name = "is_valid_check_in")
     private Boolean isValidCheckIn;
 
-    @Column(name = "is_facial_recognition", nullable = false)
+    @Column(name = "is_facial_recognition")
     private Boolean isFacialRecognition;
 
     @Column(name = "distance")

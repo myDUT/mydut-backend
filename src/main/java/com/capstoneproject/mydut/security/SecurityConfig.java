@@ -54,6 +54,7 @@ public class SecurityConfig {
                 .authorizeRequests().antMatchers(
                         "/login",
                         "/users/add-new-user",
+                        "/attendance-records/facial-check-in",
                         "/roles/**",
                         "/test",
                         "/token/refresh/**",
