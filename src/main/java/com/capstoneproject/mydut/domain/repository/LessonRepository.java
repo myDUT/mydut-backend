@@ -29,6 +29,7 @@ public interface LessonRepository extends JpaRepository<LessonEntity, UUID> {
             "and e.status = 1 " +
             "and l.datetimeFrom >= :dateTimeFrom " +
             "and l.datetimeTo <= :dateTimeTo " +
+            "and c.isDeleted != true " +
             "order by l.datetimeFrom asc")
     List<GeneralInfoLessonDTO> findAllLessonsBelongToStudentInOneDay(
             @Param("userId") UUID userId,
@@ -42,6 +43,7 @@ public interface LessonRepository extends JpaRepository<LessonEntity, UUID> {
             "where c.createdBy = :userId " +
             "and l.datetimeFrom >= :dateTimeFrom " +
             "and l.datetimeTo <= :dateTimeTo " +
+            "and c.isDeleted != true " +
             "order by l.datetimeFrom asc")
     List<GeneralInfoLessonDTO> findAllLessonsCreatedByTeacherInOneDay(
             @Param("userId") UUID userId,
@@ -54,6 +56,7 @@ public interface LessonRepository extends JpaRepository<LessonEntity, UUID> {
             "inner join ClassEntity c on l.clazz.classId = c.classId " +
             "where l.datetimeFrom >= :dateTimeFrom " +
             "and l.datetimeTo <= :dateTimeTo " +
+            "and c.isDeleted != true " +
             "order by l.datetimeFrom asc")
     List<GeneralInfoLessonDTO> findAllLessonsInOneDay(
             @Param("dateTimeFrom") Timestamp dateTimeFrom,
