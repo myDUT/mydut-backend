@@ -3,7 +3,9 @@ package com.capstoneproject.mydut.controller;
 import com.capstoneproject.mydut.common.constants.MyDUTPermission;
 import com.capstoneproject.mydut.payload.request.attendancerecord.AttendanceRecordRequest;
 import com.capstoneproject.mydut.payload.request.attendancerecord.AttendanceReportRequest;
+import com.capstoneproject.mydut.payload.request.attendancerecord.FacialCheckIn;
 import com.capstoneproject.mydut.payload.response.AttendanceRecordDTO;
+import com.capstoneproject.mydut.payload.response.NoContentDTO;
 import com.capstoneproject.mydut.payload.response.OnlyIdDTO;
 import com.capstoneproject.mydut.payload.response.Response;
 import com.capstoneproject.mydut.service.AttendanceRecordService;
@@ -38,5 +40,8 @@ public class AttendanceRecordController {
         return attendanceRecordService.getAttendanceReportOfLesson(request);
     }
 
-
+    @PostMapping("/facial-check-in")
+    public Response<NoContentDTO> facialCheckIn(@RequestBody FacialCheckIn request) {
+        return attendanceRecordService.facialCheckIn(request);
+    }
 }

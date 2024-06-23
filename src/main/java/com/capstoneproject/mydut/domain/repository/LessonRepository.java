@@ -63,6 +63,7 @@ public interface LessonRepository extends JpaRepository<LessonEntity, UUID> {
             "l.presentStudent as presentStudent, c.name as className, c.totalStudent as totalStudent, c.room.name as roomName " +
             "from LessonEntity l " +
             "join l.clazz c " +
-            "where c.classId = :classId")
+            "where c.classId = :classId " +
+            "order by datetimeFrom asc")
     List<LessonDetail> findAllLessonsByClassId(@Param(value = "classId") UUID classId);
 }

@@ -3,6 +3,7 @@ package com.capstoneproject.mydut.service.impl;
 import com.capstoneproject.mydut.domain.dto.CoordinateDTO;
 import com.capstoneproject.mydut.domain.entity.AttendanceRecordEntity;
 import com.capstoneproject.mydut.domain.entity.CoordinateEntity;
+import com.capstoneproject.mydut.domain.entity.UserEntity;
 import com.capstoneproject.mydut.domain.projection.AttendanceRecordDetail;
 import com.capstoneproject.mydut.domain.repository.AttendanceRecordRepository;
 import com.capstoneproject.mydut.domain.repository.CoordinateRepository;
@@ -11,19 +12,19 @@ import com.capstoneproject.mydut.domain.repository.UserRepository;
 import com.capstoneproject.mydut.exception.ObjectNotFoundException;
 import com.capstoneproject.mydut.payload.request.attendancerecord.AttendanceRecordRequest;
 import com.capstoneproject.mydut.payload.request.attendancerecord.AttendanceReportRequest;
-import com.capstoneproject.mydut.payload.response.AttendanceRecordDTO;
-import com.capstoneproject.mydut.payload.response.EnrolledStudentDTO;
-import com.capstoneproject.mydut.payload.response.OnlyIdDTO;
-import com.capstoneproject.mydut.payload.response.Response;
+import com.capstoneproject.mydut.payload.request.attendancerecord.FacialCheckIn;
+import com.capstoneproject.mydut.payload.response.*;
 import com.capstoneproject.mydut.service.AttendanceRecordService;
 import com.capstoneproject.mydut.service.EnrollmentService;
 import com.capstoneproject.mydut.service.LessonService;
 import com.capstoneproject.mydut.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -165,10 +166,12 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
                     AttendanceRecordDetail recordDetail = aRecordMap.get(s.getUserId());
 
                     if (recordDetail != null) {
-                        builder.setTimeIn(recordDetail.getTimeIn().toString());
+                        builder.setTimeIn(recordDetail.getTimeIn() != null ? recordDetail.getTimeIn().toString() : StringUtils.EMPTY);
                         builder.setIsValidCheckIn(Boolean.TRUE.equals(recordDetail.getIsValidCheckIn()) ? Boolean.TRUE : Boolean.FALSE);
                         builder.setIsFacialRecognition(Boolean.TRUE.equals(recordDetail.getIsFacialRecognition()) ? Boolean.TRUE : Boolean.FALSE);
-                        builder.setDistance(recordDetail.getDistance() * 1000); /* distance: meter */
+                        if (recordDetail.getDistance() != null) {
+                            builder.setDistance(recordDetail.getDistance() * 1000); /* distance: meter */
+                        }
                     }
 
                     return builder.build();
@@ -179,6 +182,58 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
                 .setSuccess(true)
                 .setMessage("Get Report of Lesson Successfully.")
                 .setData(attendanceReport)
+                .build();
+    }
+
+    @Override
+    public Response<NoContentDTO> facialCheckIn(FacialCheckIn request) {
+        // Get lesson
+        var lesson = lessonRepository.findById(UUID.fromString(request.getLessonId())).orElseThrow(() ->
+                new ObjectNotFoundException("lessonId", request.getLessonId()));
+
+        // Get list student of class
+        List<EnrolledStudentDTO> students = enrollmentService.getAllApprovedStudentByClassId(request.getClassId());
+
+        List<String> studentCodeInClass = students.stream()
+                .map(EnrolledStudentDTO::getStudentCode)
+                .collect(Collectors.toList());
+
+        // Filter student not in class
+        var validStudentCodes = request.getStudentCodes().stream()
+                .filter(studentCodeInClass::contains)
+                .collect(Collectors.toList());
+
+        List<UserEntity> userEntities = userRepository.findAllByStudentCodes(validStudentCodes);
+
+        List<AttendanceRecordEntity> attendanceRecordEntities = new ArrayList<>();
+
+        userEntities.forEach(user -> {
+            var existAttendanceRecord = attendanceRecordRepository.findByUserIdAndLessonId(user.getUserId(), lesson.getLessonId());
+
+            if (existAttendanceRecord.isPresent()) {
+                var updatedRecord = existAttendanceRecord.get();
+                updatedRecord.setIsFacialRecognition(true);
+
+                attendanceRecordEntities.add(updatedRecord);
+
+            } else {
+                AttendanceRecordEntity newAttendanceRecord = new AttendanceRecordEntity();
+
+                newAttendanceRecord.setUser(user);
+                newAttendanceRecord.setLesson(lesson);
+                newAttendanceRecord.setIsFacialRecognition(true);
+
+                attendanceRecordEntities.add(newAttendanceRecord);
+            }
+        });
+        attendanceRecordRepository.saveAll(attendanceRecordEntities);
+
+        // Update presentStudent/absentStudent
+        lessonService.updatePresentStudentInLesson(request.getLessonId());
+
+        return Response.<NoContentDTO>newBuilder()
+                .setSuccess(true)
+                .setMessage("Facial checkin successfully.")
                 .build();
     }
 }
