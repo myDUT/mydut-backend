@@ -6,6 +6,8 @@ import com.capstoneproject.mydut.domain.entity.UserEntity;
 import com.capstoneproject.mydut.domain.repository.RoleRepository;
 import com.capstoneproject.mydut.domain.repository.UserRepository;
 import com.capstoneproject.mydut.exception.ObjectNotFoundException;
+import com.capstoneproject.mydut.kafka.payload.SendUserRegistrationNotificationCommand;
+import com.capstoneproject.mydut.kafka.producer.UserEmailKafkaProducer;
 import com.capstoneproject.mydut.payload.request.user.NewUserRequest;
 import com.capstoneproject.mydut.payload.request.user.UpdateUserRequest;
 import com.capstoneproject.mydut.payload.response.NoContentDTO;
@@ -42,6 +44,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final SecurityUtils securityUtils;
 
+    // Kafka Producer
+    private final UserEmailKafkaProducer userEmailKafkaProducer;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new ObjectNotFoundException("username", username));
@@ -72,11 +77,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         var addedUser = userRepository.save(newUser);
 
+        SendUserRegistrationNotificationCommand command = getSendUserRegistrationNotificationCommand(request);
+        userEmailKafkaProducer.sendEmailForUserRegistrationNotification(command);
+
         return Response.<OnlyIdDTO>newBuilder()
                 .setSuccess(true)
                 .setData(OnlyIdDTO.newBuilder()
                         .setId(String.valueOf(addedUser.getUserId()))
                         .build())
+                .build();
+    }
+
+    private SendUserRegistrationNotificationCommand getSendUserRegistrationNotificationCommand(NewUserRequest request) {
+        return SendUserRegistrationNotificationCommand.newBuilder()
+                .setTo(List.of(request.getEmail()))
+                .setFullName(request.getFullName())
+                .setUsername(request.getUsername())
+                .setToken(StringUtils.EMPTY)
                 .build();
     }
 

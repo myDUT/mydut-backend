@@ -7,6 +7,7 @@ import com.capstoneproject.mydut.payload.response.OnlyIdDTO;
 import com.capstoneproject.mydut.payload.response.Response;
 import com.capstoneproject.mydut.payload.response.UserDTO;
 import com.capstoneproject.mydut.service.UserService;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

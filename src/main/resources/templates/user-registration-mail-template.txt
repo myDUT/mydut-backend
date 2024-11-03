@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <style type="text/css">
+    p {
+      padding-top: 20px;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    body {
+      max-width: 750px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header" class="clearfix">
+    <img src="link_image"
+      style="max-width: 750px;">
+  </div>
+  <div id="maincontent" style="min-height: 270px; text-align: left; padding-left: 0px; max-width: 750px">
+    <div id="content">
+      <div id="main">
+        <p>Dear ${fullName},</p>
+        <p>
+          Congratulations! Your request to create an account on the myDUT system has been
+          successfully approved.
+        </p>
+        <p style="padding-top: 0;"><strong>Account Details:</strong></p>
+        <ul>
+          <li>Username: ${userName}</li>
+          <li>Email: ${emailUser}</li>
+        </ul>
+        <p style="padding-top: 0;"><strong>Please log in to the system using the account information
+            above.</strong></p>
+        <p style="padding-top: 0;"><strong>To log in, please visit:</strong></p>
+        <a href="${domain}"><img src="${logoLink}" style="max-width: 200px; height: auto;" alt="logoLink"></a>
+        <p style="padding-top: 0;">Welcome to myDUT! We hope you have a great experience.</p>
+        <p>Sincerely,</p>
+        <p style="padding-top: 0;">myDUT - Attendance Tracking System </p>
+      </div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+  <br /><br />
+</body>
+
+</html>
